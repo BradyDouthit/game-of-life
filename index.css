@@ -3,10 +3,53 @@ body {
     padding: 0;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100vw;
     height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.edit-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: #45a049;
+}
+
+.play-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+.play-button:hover {
+    background-color: #1976D2;
+}
+
+button.active {
+    background-color: #666;
 }
 
 canvas {
