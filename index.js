@@ -102,16 +102,15 @@ function getCellNeighbors(x, y) {
 		top = grid[x - 1][y]
 	}
 
-	if (y >= 0) {
+	if (y + 1 < GRID_SIZE) {
 		right = grid[x][y + 1]
 	}
 
-	console.log({ x, y, GRID_SIZE, atX: grid[x + 1] })
 	if (x + 1 < GRID_SIZE) {
 		bottom = grid[x + 1][y];
 	}
 
-	if (y < GRID_SIZE) {
+	if (y - 1 >= 0) {
 		left = grid[x][y - 1];
 	}
 
@@ -119,51 +118,45 @@ function getCellNeighbors(x, y) {
 }
 
 function getNumNeighbors(neighbors) {
-	const validNeigbors = Object.values(neighbors).filter(neighbor => typeof neighbor === 'number' && neighbor === 1)
-	let sum = 0;
-
-	validNeigbors.forEach(neighbor => {
-		sum += neighbor
-	})
-
-	return sum;
+	return Object.values(neighbors).filter(neighbor => neighbor === STATE_MAPPING.living.code).length;
 }
 
 function visualizeNeighbors() {
+	// Create a temporary grid to store the next state
+	const nextGrid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(STATE_MAPPING.dead.code));
+	
 	for (let row = 0; row < GRID_SIZE; row++) {
 		for (let col = 0; col < GRID_SIZE; col++) {
 			const cell = grid[row][col];
 			const neighbors = getCellNeighbors(row, col);
-			const numNeighbors = getNumNeighbors(neighbors)
-
-
+			const numNeighbors = getNumNeighbors(neighbors);
 
 			if (cell === STATE_MAPPING.living.code) {
-				//top
-				// grid[row - 1][col] = 2
-				console.log({ neighbors, numNeighbors })
-				grid[row + 1][col] = 2
-				if (numNeighbors < 2 || numNeighbors > 4) {
-					// Turn a living cell into a dead one
-					grid[row][col] = STATE_MAPPING.dead.code;
+				// Any live cell with fewer than two live neighbors dies (underpopulation)
+				// Any live cell with more than three live neighbors dies (overpopulation)
+				if (numNeighbors < 2 || numNeighbors > 3) {
+					nextGrid[row][col] = STATE_MAPPING.dead.code;
+				} else {
+					nextGrid[row][col] = STATE_MAPPING.living.code;
 				}
-			}
-
-			if (cell === STATE_MAPPING.dead.code) {
+			} else if (cell === STATE_MAPPING.dead.code) {
+				// Any dead cell with exactly three live neighbors becomes a live cell (reproduction)
 				if (numNeighbors === 3) {
-					// Turn a dead cell into a living one
-					grid[row][col] = STATE_MAPPING.living.code;
+					nextGrid[row][col] = STATE_MAPPING.living.code;
+				} else {
+					nextGrid[row][col] = STATE_MAPPING.dead.code;
 				}
 			}
-
 		}
 	}
-
-	drawGrid()
+	
+	// Update the grid with the new state
+	grid = nextGrid;
 }
 
 function handlePlay() {
 	visualizeNeighbors()
+	drawGrid()
 }
 
 // Event listeners
