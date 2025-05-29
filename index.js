@@ -99,22 +99,18 @@ function getCellNeighbors(x, y) {
 
 	if (x - 1 >= 0) {
 		top = grid[x - 1][y]
-		grid[x - 1][y] = 2
 	}
 
-	if (y - 1 >= 0) {
+	if (y >= 0) {
 		right = grid[x][y + 1]
-		grid[x][y - 1] = 2
 	}
 
 	if (x + 1 < GRID_SIZE) {
 		bottom = grid[x + 1][y];
-		grid[x + 1][y] = 2;
 	}
 
-	if (y + 1 < GRID_SIZE) {
+	if (y < GRID_SIZE) {
 		left = grid[x][y - 1];
-		grid[x][y + 1] = 2
 	}
 
 	return { left, right, top, bottom }
@@ -134,7 +130,6 @@ function visualizeNeighbors() {
 }
 
 function handlePlay() {
-	console.log("Visualizing", grid);
 	visualizeNeighbors()
 }
 
