@@ -6,10 +6,11 @@ const playButton = document.getElementById('playButton');
 
 const GRID_SIZE = 10;
 const CELL_PADDING = 2;
-const COLOR_MAPPING = {
-	dead: { color: 'black', code: 0 },
-	living: { color: 'red', code: 1 },
-	debug: { color: 'blue', code: 2 },
+// You can simply set a grid coordinate to 2 to make that square blue
+const STATE_MAPPING = {
+	dead: { color: '#3c3c3c', code: 0 },
+	living: { color: '#4ec9b0', code: 1 },
+	debug: { color: '#569cd6', code: 2 },
 }
 const squareSize = 30;
 let isEditMode = false;
@@ -37,19 +38,19 @@ function drawGrid() {
 			const x = col * (squareSize + CELL_PADDING);
 			const y = row * (squareSize + CELL_PADDING);
 
-			let color = COLOR_MAPPING.living.color;
+			let color = STATE_MAPPING.living.color;
 			const cell = grid[row][col];
 
-			if (cell === COLOR_MAPPING.living.code) {
-				color = COLOR_MAPPING.living.color;
+			if (cell === STATE_MAPPING.living.code) {
+				color = STATE_MAPPING.living.color;
 			}
 
-			if (cell === COLOR_MAPPING.dead.code) {
-				color = COLOR_MAPPING.dead.color;
+			if (cell === STATE_MAPPING.dead.code) {
+				color = STATE_MAPPING.dead.color;
 			}
 
-			if (cell === COLOR_MAPPING.debug.code) {
-				color = COLOR_MAPPING.debug.color;
+			if (cell === STATE_MAPPING.debug.code) {
+				color = STATE_MAPPING.debug.color;
 			}
 			ctx.fillStyle = color;
 			ctx.fillRect(x, y, squareSize, squareSize);
@@ -79,10 +80,10 @@ function handleCanvasClick(event) {
 	if (position) {
 		const cell = grid[position.row][position.col]
 
-		if (cell === COLOR_MAPPING.living.code) {
-			grid[position.row][position.col] = COLOR_MAPPING.dead.code;
-		} else if (cell === COLOR_MAPPING.dead.code) {
-			grid[position.row][position.col] = COLOR_MAPPING.living.code;
+		if (cell === STATE_MAPPING.living.code) {
+			grid[position.row][position.col] = STATE_MAPPING.dead.code;
+		} else if (cell === STATE_MAPPING.dead.code) {
+			grid[position.row][position.col] = STATE_MAPPING.living.code;
 		}
 
 		drawGrid();
@@ -116,13 +117,25 @@ function getCellNeighbors(x, y) {
 	return { left, right, top, bottom }
 }
 
+function getNumNeighbors(neighbors) {
+	const validNeigbors = Object.values(neighbors).filter(neighbor => typeof neighbor === 'number')
+	let sum = 0;
+
+	validNeigbors.forEach(neighbor => {
+		sum += neighbor
+	})
+
+	return sum;
+}
+
 function visualizeNeighbors() {
 	for (let row = 0; row < GRID_SIZE; row++) {
 		for (let col = 0; col < GRID_SIZE; col++) {
 			const cell = grid[row][col];
 			if (cell === 0 || cell === 2) continue;
 			const neighbors = getCellNeighbors(row, col);
-			console.log(neighbors)
+			const numNeighbors = getNumNeighbors(neighbors)
+			console.log({ neighbors, numNeighbors })
 		}
 	}
 
