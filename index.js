@@ -106,6 +106,7 @@ function getCellNeighbors(x, y) {
 		right = grid[x][y + 1]
 	}
 
+	console.log({ x, y, GRID_SIZE, atX: grid[x + 1] })
 	if (x + 1 < GRID_SIZE) {
 		bottom = grid[x + 1][y];
 	}
@@ -118,7 +119,7 @@ function getCellNeighbors(x, y) {
 }
 
 function getNumNeighbors(neighbors) {
-	const validNeigbors = Object.values(neighbors).filter(neighbor => typeof neighbor === 'number')
+	const validNeigbors = Object.values(neighbors).filter(neighbor => typeof neighbor === 'number' && neighbor === 1)
 	let sum = 0;
 
 	validNeigbors.forEach(neighbor => {
@@ -132,10 +133,29 @@ function visualizeNeighbors() {
 	for (let row = 0; row < GRID_SIZE; row++) {
 		for (let col = 0; col < GRID_SIZE; col++) {
 			const cell = grid[row][col];
-			if (cell === 0 || cell === 2) continue;
 			const neighbors = getCellNeighbors(row, col);
 			const numNeighbors = getNumNeighbors(neighbors)
-			console.log({ neighbors, numNeighbors })
+
+
+
+			if (cell === STATE_MAPPING.living.code) {
+				//top
+				// grid[row - 1][col] = 2
+				console.log({ neighbors, numNeighbors })
+				grid[row + 1][col] = 2
+				if (numNeighbors < 2 || numNeighbors > 4) {
+					// Turn a living cell into a dead one
+					grid[row][col] = STATE_MAPPING.dead.code;
+				}
+			}
+
+			if (cell === STATE_MAPPING.dead.code) {
+				if (numNeighbors === 3) {
+					// Turn a dead cell into a living one
+					grid[row][col] = STATE_MAPPING.living.code;
+				}
+			}
+
 		}
 	}
 
