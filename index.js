@@ -78,11 +78,13 @@ function handleCanvasClick(event) {
 	const position = getGridPosition(x, y);
 	if (position) {
 		const cell = grid[position.row][position.col]
+
 		if (cell === COLOR_MAPPING.living.code) {
 			grid[position.row][position.col] = COLOR_MAPPING.dead.code;
 		} else if (cell === COLOR_MAPPING.dead.code) {
 			grid[position.row][position.col] = COLOR_MAPPING.living.code;
 		}
+
 		drawGrid();
 	}
 }
@@ -92,14 +94,43 @@ function toggleEditMode() {
 	editButton.classList.toggle('active');
 }
 
+function getCellNeighbors(x, y) {
+	let top, right, bottom, left;
+
+	if (x - 1 >= 0) {
+		top = grid[x - 1][y]
+		grid[x - 1][y] = 2
+	}
+
+	if (y - 1 >= 0) {
+		right = grid[x][y + 1]
+		grid[x][y - 1] = 2
+	}
+
+	if (x + 1 < GRID_SIZE) {
+		bottom = grid[x + 1][y];
+		grid[x + 1][y] = 2;
+	}
+
+	if (y + 1 < GRID_SIZE) {
+		left = grid[x][y - 1];
+		grid[x][y + 1] = 2
+	}
+
+	return { left, right, top, bottom }
+}
+
 function visualizeNeighbors() {
 	for (let row = 0; row < GRID_SIZE; row++) {
 		for (let col = 0; col < GRID_SIZE; col++) {
 			const cell = grid[row][col];
-			if (!cell) continue;
-
+			if (cell === 0 || cell === 2) continue;
+			const neighbors = getCellNeighbors(row, col);
+			console.log(neighbors)
 		}
 	}
+
+	drawGrid()
 }
 
 function handlePlay() {
