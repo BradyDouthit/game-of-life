@@ -31,37 +31,43 @@ button {
     font-size: 14px;
     transition: all 0.2s;
     color: #d4d4d4;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.edit-button {
-    background-color: #0e639c;
-}
-
-.edit-button:hover {
-    background-color: #1177bb;
+button i {
+    font-size: 16px;
 }
 
 .play-button {
-    background-color: #2d2d2d;
-    border: 1px solid #3c3c3c;
+    background-color: transparent;
 }
 
 .play-button:hover {
-    background-color: #3c3c3c;
+    background-color: #1b5e20;
 }
 
-.stop-button {
-    background-color: #2d2d2d;
-    border: 1px solid #3c3c3c;
+.pause-button {
+    background-color: transparent;
 }
 
-.stop-button:hover {
+.pause-button:hover {
     background-color: #3c3c3c;
 }
 
 button.active {
     background-color: #37373d;
-    border: 1px solid #4d4d4d;
+}
+
+.play-button.active {
+    background-color: #43a047;
+}
+
+.pause-button.active {
+    background-color: #2d2d2d;
 }
 
 canvas {

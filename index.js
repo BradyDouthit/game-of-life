@@ -1,11 +1,10 @@
 // Get the canvas element
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext("2d");
-const editButton = document.getElementById('editButton');
 const playButton = document.getElementById('playButton');
 const stopButton = document.getElementById('stopButton');
 
-const GRID_SIZE = 10;
+const GRID_SIZE = 20;
 const CELL_PADDING = 2;
 // You can simply set a grid coordinate to 2 to make that square blue
 const STATE_MAPPING = {
@@ -14,7 +13,6 @@ const STATE_MAPPING = {
 	debug: { color: '#569cd6', code: 2 },
 }
 const squareSize = 30;
-let isEditMode = false;
 let grid = [];
 let gameInterval = null;
 
@@ -71,8 +69,6 @@ function getGridPosition(x, y) {
 }
 
 function handleCanvasClick(event) {
-	if (!isEditMode) return;
-
 	const rect = canvas.getBoundingClientRect();
 	const x = event.clientX - rect.left;
 	const y = event.clientY - rect.top;
@@ -89,11 +85,6 @@ function handleCanvasClick(event) {
 
 		drawGrid();
 	}
-}
-
-function toggleEditMode() {
-	isEditMode = !isEditMode;
-	editButton.classList.toggle('active');
 }
 
 function getCellNeighbors(x, y) {
@@ -183,6 +174,10 @@ function handlePlay() {
 		clearInterval(gameInterval);
 	}
 	
+	// Update button states
+	playButton.classList.add('active');
+	stopButton.classList.remove('active');
+	
 	getNextGeneration();
 	drawGrid();
 
@@ -197,11 +192,14 @@ function handleStop() {
 		clearInterval(gameInterval);
 		gameInterval = null;
 	}
+	
+	// Update button states
+	playButton.classList.remove('active');
+	stopButton.classList.remove('active');
 }
 
 // Event listeners
 canvas.addEventListener('click', handleCanvasClick);
-editButton.addEventListener('click', toggleEditMode);
 playButton.addEventListener('click', handlePlay);
 stopButton.addEventListener('click', handleStop);
 
