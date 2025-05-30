@@ -95,26 +95,45 @@ function toggleEditMode() {
 	editButton.classList.toggle('active');
 }
 
-function getCellNeighbors(x, y) {
-	let top, right, bottom, left;
+function getCellNeighbors(x, y, cell) {
+	let top, topRight, right, bottomRight, bottom, bottomLeft, left, topLeft;
 
 	if (x - 1 >= 0) {
 		top = grid[x - 1][y]
+	}
+
+	if (x + 1 < GRID_SIZE && y - 1 >= 0) {
+		topRight = grid[x + 1][y - 1]
 	}
 
 	if (y + 1 < GRID_SIZE) {
 		right = grid[x][y + 1]
 	}
 
+	if (x + 1 < GRID_SIZE && y + 1 < GRID_SIZE) {
+		bottomRight = grid[x + 1][y + 1]
+	}
+
 	if (x + 1 < GRID_SIZE) {
 		bottom = grid[x + 1][y];
 	}
+
+
+	if (x - 1 >= 0 && y + 1 < GRID_SIZE) {
+		bottomLeft = grid[x - 1][y + 1]
+	}
+
 
 	if (y - 1 >= 0) {
 		left = grid[x][y - 1];
 	}
 
-	return { left, right, top, bottom }
+	if (x - 1 >= 0 && y - 1 >= 0) {
+		topLeft = grid[x - 1][y - 1]
+	}
+
+
+	return { top, topRight, right, bottomRight, bottom, bottomLeft, left, topLeft }
 }
 
 function getNumNeighbors(neighbors) {
@@ -124,12 +143,13 @@ function getNumNeighbors(neighbors) {
 function visualizeNeighbors() {
 	// Create a temporary grid to store the next state
 	const nextGrid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(STATE_MAPPING.dead.code));
-	
+
 	for (let row = 0; row < GRID_SIZE; row++) {
 		for (let col = 0; col < GRID_SIZE; col++) {
 			const cell = grid[row][col];
-			const neighbors = getCellNeighbors(row, col);
+			const neighbors = getCellNeighbors(row, col, cell);
 			const numNeighbors = getNumNeighbors(neighbors);
+
 
 			if (cell === STATE_MAPPING.living.code) {
 				// Any live cell with fewer than two live neighbors dies (underpopulation)
@@ -149,7 +169,7 @@ function visualizeNeighbors() {
 			}
 		}
 	}
-	
+
 	// Update the grid with the new state
 	grid = nextGrid;
 }
