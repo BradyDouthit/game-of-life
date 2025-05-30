@@ -50,6 +50,15 @@ button {
     background-color: #3c3c3c;
 }
 
+.stop-button {
+    background-color: #2d2d2d;
+    border: 1px solid #3c3c3c;
+}
+
+.stop-button:hover {
+    background-color: #3c3c3c;
+}
+
 button.active {
     background-color: #37373d;
     border: 1px solid #4d4d4d;

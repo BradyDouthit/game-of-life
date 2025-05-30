@@ -3,6 +3,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext("2d");
 const editButton = document.getElementById('editButton');
 const playButton = document.getElementById('playButton');
+const stopButton = document.getElementById('stopButton');
 
 const GRID_SIZE = 10;
 const CELL_PADDING = 2;
@@ -15,9 +16,9 @@ const STATE_MAPPING = {
 const squareSize = 30;
 let isEditMode = false;
 let grid = [];
+let gameInterval = null;
 
 function drawGrid() {
-	const GRID_SIZE = 10; // 10x10 grid
 	const CELL_PADDING = 2;       // 2px gap between squares
 	const squareSize = 30; // Size of each individual square (e.g., 30px)
 
@@ -95,7 +96,7 @@ function toggleEditMode() {
 	editButton.classList.toggle('active');
 }
 
-function getCellNeighbors(x, y, cell) {
+function getCellNeighbors(x, y) {
 	let top, topRight, right, bottomRight, bottom, bottomLeft, left, topLeft;
 
 	if (x - 1 >= 0) {
@@ -140,7 +141,8 @@ function getNumNeighbors(neighbors) {
 	return Object.values(neighbors).filter(neighbor => neighbor === STATE_MAPPING.living.code).length;
 }
 
-function visualizeNeighbors() {
+function getNextGeneration() {
+	console.time("Getting next generation")
 	// Create a temporary grid to store the next state
 	const nextGrid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(STATE_MAPPING.dead.code));
 
@@ -172,17 +174,36 @@ function visualizeNeighbors() {
 
 	// Update the grid with the new state
 	grid = nextGrid;
+	console.timeEnd("Getting next generation")
 }
 
 function handlePlay() {
-	visualizeNeighbors()
-	drawGrid()
+	// Clear any existing interval to prevent multiple intervals
+	if (gameInterval) {
+		clearInterval(gameInterval);
+	}
+	
+	getNextGeneration();
+	drawGrid();
+
+	gameInterval = setInterval(() => {
+		getNextGeneration();
+		drawGrid();
+	}, 100);
+}
+
+function handleStop() {
+	if (gameInterval) {
+		clearInterval(gameInterval);
+		gameInterval = null;
+	}
 }
 
 // Event listeners
 canvas.addEventListener('click', handleCanvasClick);
 editButton.addEventListener('click', toggleEditMode);
 playButton.addEventListener('click', handlePlay);
+stopButton.addEventListener('click', handleStop);
 
 function main() {
 	drawGrid();
